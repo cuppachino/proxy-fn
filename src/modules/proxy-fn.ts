@@ -1,4 +1,4 @@
-import type { IfAsync, MaybePromise, ProxyFn } from '../types/index.js'
+import type { MaybePromise, ProxyFn } from '../types/index.js'
 import { isPromise } from '../utils/is-promise.js'
 
 /**
@@ -30,16 +30,16 @@ export function proxyFn<
    * ```
    */
   return <
-    ReturnTypeOfFrom extends MaybePromise<[...ExpectedArgs, ...any[]]>,
+    ActualArgs extends MaybePromise<[...ExpectedArgs, ...any[]]>,
     From extends any[] = ExpectedArgs,
     To = T
   >({
     from,
     to
   }: Partial<{
-    from(...args: From): ReturnTypeOfFrom
-    to(res: IfAsync<ReturnTypeOfFrom, Promise<T>, T>): To
-  }>): ProxyFn<From, ExpectedArgs, To, Properties> => {
+    from(...args: From): ActualArgs
+    to(res: T): To
+  }>): ProxyFn<From, ExpectedArgs, ActualArgs, To, Properties> => {
     if (from && to) {
       return new Proxy(fn, {
         apply(target, thisArg, argArray) {

@@ -1,17 +1,4 @@
 /**
- * Extract properties attached to a function.
- */
-export type Assigned<T> = T extends (...args: any[]) => any
-  ? {
-      [K in keyof T]: {
-        [V in K]: T[K]
-      }
-    }[keyof T]
-  : {
-      [K in keyof T]: T[K]
-    }
-
-/**
  * Either the type of `T`, or the type of `T` wrapped in a promise. If `T` is already a promise, it is not wrapped.
  */
 export type MaybePromise<T> =
@@ -50,11 +37,14 @@ export type IfAsync<T, Then, Else> = T extends Promise<any> ? Then : Else
  */
 export type ProxyFn<
   From extends any[],
-  FromShouldBe extends any[],
+  ExpectedArgs extends any[],
+  ActualArgs,
   To,
-  Properties extends Record<PropertyKey, any> = {}
+  Properties extends Record<PropertyKey, any>
 > = ((
-  ...args: DefaultParameters<From, FromShouldBe>
-) => IfAsync<To, Promise<DefinitelyAwaited<To>>, DefinitelyAwaited<To>>) & {
+  ...args: DefaultParameters<From, ExpectedArgs>
+) => [ActualArgs] extends [Promise<infer _>]
+  ? Promise<DefinitelyAwaited<To>>
+  : To) & {
   [K in keyof Properties]: Properties[K]
 }
