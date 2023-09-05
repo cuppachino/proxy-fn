@@ -1,8 +1,22 @@
-# proxy-fn
+# @cuppachino/proxy-fn
 
 Proxy a function and optionally transform its parameters and output.
 
-| Type safety | Ok |
+## Installation
+
+Install using your favorite package manager.
+
+```ps1
+pnpm add @cuppachino/proxy-fn
+```
+```ps1
+npm i @cuppachino/proxy-fn
+```
+```ps1
+yarn add @cuppachino/proxy-fn
+```
+
+| | |
 | - | - |
 | Infers promises | ✅ |
 | Retains properties assigned to the function | ✅ |
