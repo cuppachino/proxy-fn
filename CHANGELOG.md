@@ -1,5 +1,11 @@
 # @cuppachino/proxy-fn
 
+## 1.0.3
+
+### Patch Changes
+
+- 41402f2: add test cases and fix bug with nested Promise<T> types
+
 ## 1.0.2
 
 ### Patch Changes
