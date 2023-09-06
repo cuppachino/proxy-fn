@@ -1,5 +1,8 @@
 import type { Assigned } from '../types/assigned.js'
+import type { DefinitelyAwaited } from '../types/definitely-awaited.js'
+import type { If } from '../types/if.js'
 import type { IsEmpty } from '../types/is-empty.js'
+import type { IsPromise } from '../types/is-promise.js'
 import type { MaybePromise } from '../types/maybe-promise.js'
 import { isPromise } from '../utils/is-promise.js'
 
@@ -14,7 +17,7 @@ export type ProxyFnHandler<Fn extends (...args: any[]) => any> = <
   }>
 ) => ProxyFn<
   NewArgs,
-  [ActualArgs] extends [Promise<infer _>] ? Promise<NewReturnType> : NewReturnType,
+  If<IsPromise<ActualArgs>, Promise<DefinitelyAwaited<NewReturnType>>, NewReturnType>,
   Assigned<Fn>
 >
 
