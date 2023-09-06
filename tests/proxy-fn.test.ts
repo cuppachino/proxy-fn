@@ -4,7 +4,7 @@ import { test, expectTypeOf, expect } from 'vitest'
 
 test('proxy function', () => {
   const add = (a: number, b: number) => a + b
-  
+
   expectTypeOf(add).toEqualTypeOf((a: number, b: number) => a + b)
   expectTypeOf(add).not.toEqualTypeOf<(...args: number[]) => number>()
 
@@ -84,12 +84,17 @@ test('proxy function', () => {
 })
 
 test('proxy function with properties', () => {
-  const adder = Object.assign(function _adder(a: number, b: number) { return a + b }, {
-    hello: 'addAlt',
-    greet() {
-      console.log(this.hello)
+  const adder = Object.assign(
+    function _adder(a: number, b: number) {
+      return a + b
+    },
+    {
+      hello: 'addAlt',
+      greet() {
+        console.log(this.hello)
+      }
     }
-  })
+  )
 
   const b1 = proxyFn(adder)({})
   //    ^?
@@ -108,12 +113,74 @@ test('proxy function with properties', () => {
       return res
     }
   })
-  expectTypeOf(b2).toEqualTypeOf<(() => Promise<number>) & {
-    hello: string,
-    greet(): void
-  }>()
+  expectTypeOf(b2).toEqualTypeOf<
+    (() => Promise<number>) & {
+      hello: string
+      greet(): void
+    }
+  >()
   expect(b2.hello).toBe('addAlt')
   expect(b2.greet).toBeInstanceOf(Function)
   expect(b2()).instanceOf(Promise)
   expect(b2()).resolves.toBe(3)
+})
+
+test('should not return nested promises', () => {
+  const getInventories = (id: number) =>
+    Promise.resolve({
+      ownerId: id,
+      items: []
+    })
+  const getDefaultUser = () => Promise.resolve({ id: 42069 })
+
+  const x = proxyFn(getInventories)(
+    (() => {
+      let currentId: number | null = null
+      const getId = async () => {
+        if (currentId !== null) return currentId
+        return (currentId = (await getDefaultUser()).id)
+      }
+      return {
+        async from() {
+          return [await getId()]
+        },
+        async to(res) {
+          return [await res, 'closure'] as const
+        }
+      }
+    })()
+  )
+  expectTypeOf(x).toEqualTypeOf<
+    () => Promise<readonly [{ ownerId: number; items: never[] }, 'closure']>
+  >()
+  expect(x()).instanceOf(Promise)
+  expect(x()).resolves.toHaveLength(2)
+  expect(x()).resolves.toEqual([{ ownerId: 42069, items: [] }, 'closure'])
+
+  const y = proxyFn(getInventories)(
+    (() => {
+      const { getId } = new (class {
+        currentId: number | null = null
+        getId = async () => {
+          if (this.currentId !== null) return this.currentId
+          return (this.currentId = (await getDefaultUser()).id)
+        }
+      })()
+      return {
+        async from() {
+          return [await getId()]
+        },
+        async to(res) {
+          return [await res, 'class'] as const
+        }
+      }
+    })()
+  )
+
+  expectTypeOf(y).toEqualTypeOf<
+    () => Promise<readonly [{ ownerId: number; items: never[] }, 'class']>
+  >()
+  expect(y()).instanceOf(Promise)
+  expect(y()).resolves.toHaveLength(2)
+  expect(y()).resolves.toEqual([{ ownerId: 42069, items: [] }, 'class'])
 })
