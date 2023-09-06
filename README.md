@@ -82,13 +82,15 @@ infersPromises(4, 8) // Promise<[sum: number, msg: string]>
 ```ts
 /**
  * ```ts
- * () => Promise<[sum: number, msg: string]>
+ * (() => Promise<[sum: number, msg: string]>) & { name: string }
  *
  * ProxyFn<
  *   // NewArgs
  *   [],
  *   // NewReturnType
- *   Promise<[sum: number, msg: string]>
+ *   Promise<[sum: number, msg: string]>,
+ *   // Properties
+ *   { name: string }
  * >
  * ```
  */
