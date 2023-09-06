@@ -1,5 +1,11 @@
 # @cuppachino/proxy-fn
 
+## 1.0.2
+
+### Patch Changes
+
+- 67d3357: Update README.md
+
 ## 1.0.1
 
 ### Patch Changes
