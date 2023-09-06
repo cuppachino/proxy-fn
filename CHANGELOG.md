@@ -1,5 +1,11 @@
 # @cuppachino/proxy-fn
 
+## 1.0.0
+
+### Major Changes
+
+- 6f7692d: add tests and pass all cases
+
 ## 0.0.2
 
 ### Patch Changes
