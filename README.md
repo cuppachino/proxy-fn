@@ -36,16 +36,10 @@ const add = (a: number, b: number) => a + b
  * (a: number, b: number, ...args: number[]) => number
  *
  * ProxyFn<
- *   // From
+ *   // NewArgs
  *   [a: number, b: number, ...args: number[]],
- *   // ExpectedArgs
- *   [a: number, b: number],
- *   // ActualArgs
- *   [number, number]
- *   // To
- *   number,
- *   // Original function
- *   (a: number, b: number) => number
+ *   // NewReturnType
+ *   number
  * >
  * ```
  */
@@ -66,16 +60,10 @@ addMany(1, 2, 3, 4) // number
  * (a: number, b: number) => Promise<readonly [number, string]>
  *
  * ProxyFn<
- *   // From
+ *   // NewArgs
  *   [a: number, b: number],
- *   // ExpectedArgs
- *   [a: number, b: number],
- *   // ActualArgs
- *   MaybePromise<[a: number, b: number, ...any[]]>,
- *   // To
- *   Promise<readonly [number, string]>,
- *   // Original function
- *   (a: number, b: number) => number
+ *   // NewReturnType
+ *   Promise<readonly [number, string]>
  * >
  * ```
  */
@@ -97,16 +85,10 @@ infersPromises(4, 8) // Promise<[sum: number, msg: string]>
  * () => Promise<[sum: number, msg: string]>
  *
  * ProxyFn<
- *   // From
+ *   // NewArgs
  *   [],
- *   // ExpectedArgs
- *   [a: number, b: number],
- *   // ActualArgs
- *   Promise<[number, number]>,
- *   // To
- *   [sum: number, msg: string],
- *   // Original function
- *   ((a: number, b: number) => number) & { name: string; }
+ *   // NewReturnType
+ *   Promise<[sum: number, msg: string]>
  * >
  * ```
  */
