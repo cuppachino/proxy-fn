@@ -60,9 +60,7 @@ export const proxyFn = <Fn extends (...args: any[]) => any>(fn: Fn): ProxyFnHand
   return <
     NewArgs extends any[] = Parameters<Fn>,
     NewReturnType = ReturnType<Fn>,
-    ActualArgs extends [...Parameters<Fn>, ...any[]] | Promise<[...Parameters<Fn>, ...any[]]> = [
-      ...Parameters<Fn>
-    ]
+    ActualArgs extends MaybePromise<[...Parameters<Fn>, ...any[]]> = [...Parameters<Fn>]
   >({
     from,
     to
